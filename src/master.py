@@ -27,19 +27,21 @@ class Master(object):
         self.inputs = None
     
     def run_master(self):
-        self.inputs = Inp_Pars(img_size=50, n_train=-1)
+        self.inputs = Inp_Pars()
         
         if self.data_flag:
             Preproc_Data(self.inputs)
-            #Process_Data(self.inputs)
+            Process_Data(self.inputs)
+            pass
         if self.train_flag:
             Train_Model(self.inputs)
+            pass
         if self.pred_flag:
             pass            
 
 
 if __name__ == '__main__':
     Master(
-      data_flag=True, train_flag=False, pred_flag=False).run_master() 
+      data_flag=True, train_flag=True, pred_flag=False).run_master() 
 
 

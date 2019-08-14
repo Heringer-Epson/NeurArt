@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import numpy as np
 import pandas as pd
 from collections import Counter
 
@@ -12,13 +11,12 @@ def display_info(df, setname):
 
 class Preproc_Data(object):
     """
-    The original data contains roughly 50,000 artworks and more than 120 art
+    The original data contains roughly 80,000 artworks and more than 130 art
     styles. About half of the styles is poorly represented, with less than 100
     paintings.
     This code trims the data to remove these poorly represented styles, with
     the threshold set by the n_style_min parameter (see  theinput_pars.py file). 
-    Works that do not have an assigned style are also removed. Finally, the
-    data are converted to a more ML friendly style and stored in json files.
+    Works that do not have an assigned style are also removed.
     
     Parameters:
     -----------
@@ -34,6 +32,7 @@ class Preproc_Data(object):
         self._inp = _inp
         
         self.all_styles = None
+        self.avail_styles = None
         
         self.run_preproc_data()
     
@@ -56,27 +55,45 @@ class Preproc_Data(object):
         display_info(self.attr, 'NaN removed')
         
         #Remove underrepresented art styles.
-        self.all_styles = self.attr['style'].unique()
-        style_counter = Counter(self.attr['style'].values)
-        relev_styles = [style for style in style_counter.keys()
-                        if style_counter[style] >= self._inp.n_style_min]
-        self.attr = self.attr[self.attr['style'].isin(relev_styles)]
-        display_info(self.attr, 'Remove underrepresented art styles')
+        if self._inp.use_styles is None:
+            self.all_styles = self.attr['style'].unique()
+            style_counter = Counter(self.attr['style'].values)
+            relev_styles = [style for style in style_counter.keys()
+                            if style_counter[style] >= self._inp.n_style_min]
+            self.attr = self.attr[self.attr['style'].isin(relev_styles)]
+            display_info(self.attr, 'Remove underrepresented art styles')
 
-    def check_corrupted_files(self):
-        #Not yet implemented.
-        pass
+        else:
+            self.attr = self.attr[self.attr['style'].isin(self._inp.use_styles)]
+            display_info(self.attr, 'Keep only certain art styles.')            
+
+        #Rename analytical.
+        conversor = {'Analytical\xa0Realism': 'Analytical-Realism',
+                     'Sōsaku hanga': 'Sosaku hanga',
+                     'Naïve Art (Primitivism)': 'Naive Art (Primitivism)'}
+        self.attr['style'] = self.attr['style'].replace(conversor)
+        display_info(self.attr, 'Rename analytical')
+        self.avail_styles = self.attr['style'].unique()
+
+    def write_available_styles(self):
+        out_dir = os.path.join(self._inp.top_dir, 'output_data')
+        fpath = os.path.join(out_dir, 'art_styles.dat')
+        with open(fpath, 'w') as out:
+            out.write('%s' %(self.avail_styles[0]))
+            for style in self.avail_styles[1:]:  
+                out.write('\n%s' %(style))    
 
     def write_output(self):
-        """Store X and y. This avoids processing the data for every run.
-        """
+        #Store preprocessed dataframe.
         out_dir = os.path.join(self._inp.top_dir, 'output_data')
+        fpath = os.path.join(out_dir, 'preproc_train_info.json')
+        self.attr.to_json(fpath)
 
     def run_preproc_data(self):
         self.load_data()
         self.clean_data()
-        self.check_corrupted_files()
-        #self.write_output()
+        self.write_available_styles()
+        self.write_output()
 
     
 
