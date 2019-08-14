@@ -48,7 +48,7 @@ class Train_Model(object):
           x_col='filename',
           y_col='style',
           subset='training',
-          batch_size=30,
+          batch_size=50,
           seed=42,
           shuffle=True,
           class_mode='categorical',
@@ -61,7 +61,7 @@ class Train_Model(object):
           x_col='filename',
           y_col='style',
           subset='validation',
-          batch_size=30,
+          batch_size=50,
           seed=42,
           shuffle=True,
           class_mode='categorical',
@@ -88,7 +88,7 @@ class Train_Model(object):
         #Add last layer.
         model.add(Dropout(0.25))
         model.add(Flatten())
-        model.add(Dense(64))             
+        model.add(Dense(256))             
         model.add(Activation('relu'))
         model.add(Dropout(0.5))             
         model.add(Dense(n_classes, activation='softmax'))        
@@ -114,7 +114,7 @@ class Train_Model(object):
                             steps_per_epoch=STEP_SIZE_TRAIN,
                             validation_data=valid_generator,
                             validation_steps=STEP_SIZE_VALID,
-                            epochs=1)
+                            epochs=2)
 
         #Save weights so that we can use the trained model without
         #training it in every run.

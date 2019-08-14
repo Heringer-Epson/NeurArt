@@ -11,7 +11,7 @@ class Inp_Pars(object):
     Parameters:
     -----------
     """
-    def __init__(self, img_size=200, n_style_min=100,
+    def __init__(self, img_size=400, n_style_min=100,
                  use_styles=None, gray=False):
         self.img_size = img_size
         
