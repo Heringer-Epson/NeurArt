@@ -9,6 +9,13 @@ def display_info(df, setname):
     print ('  number of art entries: %d' %(len(df.index)))
     print ('  number of unique art styles: %d' %(len(df['style'].unique())))
 
+def write_available_styles(df, fpath):
+    style_counter = Counter(df['style'].values)
+    with open(fpath, 'w') as out:
+        out.write('Style: Count')
+        for (style,count) in style_counter.most_common():  
+            out.write('\n%s: %i' %(style,count))   
+
 class Preproc_Data(object):
     """
     The original data contains roughly 80,000 artworks and more than 130 art
@@ -30,32 +37,47 @@ class Preproc_Data(object):
     
     def __init__(self, _inp):
         self._inp = _inp
-        
         self.all_styles = None
-        self.avail_styles = None
+        self.out_dir = None
         
         self.run_preproc_data()
     
     def load_data(self):
         inp_dir = os.path.join(self._inp.top_dir, 'input_data')
+        self.out_dir = os.path.join(self._inp.top_dir, 'output_data')
         
         #Read and store csv file containing attributes of each of the images.
         attr_filepath = os.path.join(inp_dir, 'train_info.csv')
         self.attr = pd.read_csv(attr_filepath, header=0)
-        display_info(self.attr, 'Raw data')
-        
+
+    def clean_data(self):
+
         #Drop all columns except for filename and style.
         drop_cols = ['artist', 'title', 'genre', 'date']
         self.attr.drop(drop_cols, axis=1, inplace=True)
-         
-    def clean_data(self):
+
+        #Rename a few style so that the strings have fewer special chars.
+        conversor = {'Analytical\xa0Realism': 'Analytical-Realism',
+                     'Sōsaku hanga': 'Sosaku hanga',
+                     'Naïve Art (Primitivism)': 'Naive Art (Primitivism)'}
+        self.attr['style'] = self.attr['style'].replace(conversor)
+        
+        #Display information on raw dataset and write sorted file with styles.
+        display_info(self.attr, 'Raw data')
+        write_available_styles(
+          self.attr, os.path.join(self.out_dir, 'art_styles_all.dat'))        
 
         #Remove rows with 'nan' style.
         self.attr.dropna(axis=0, subset=['style'], inplace=True)
         display_info(self.attr, 'NaN removed')
         
+        #Use only art styles in use_styles.
+        if self._inp.use_styles is not  None:
+            self.attr = self.attr[self.attr['style'].isin(self._inp.use_styles)]
+            display_info(self.attr, 'Keep only certain art styles.')              
+
         #Remove underrepresented art styles.
-        if self._inp.use_styles is None:
+        if self._inp.n_style_min is not None:            
             self.all_styles = self.attr['style'].unique()
             style_counter = Counter(self.attr['style'].values)
             relev_styles = [style for style in style_counter.keys()
@@ -63,25 +85,9 @@ class Preproc_Data(object):
             self.attr = self.attr[self.attr['style'].isin(relev_styles)]
             display_info(self.attr, 'Remove underrepresented art styles')
 
-        else:
-            self.attr = self.attr[self.attr['style'].isin(self._inp.use_styles)]
-            display_info(self.attr, 'Keep only certain art styles.')            
-
-        #Rename analytical.
-        conversor = {'Analytical\xa0Realism': 'Analytical-Realism',
-                     'Sōsaku hanga': 'Sosaku hanga',
-                     'Naïve Art (Primitivism)': 'Naive Art (Primitivism)'}
-        self.attr['style'] = self.attr['style'].replace(conversor)
-        display_info(self.attr, 'Rename analytical')
-        self.avail_styles = self.attr['style'].unique()
-
-    def write_available_styles(self):
-        out_dir = os.path.join(self._inp.top_dir, 'output_data')
-        fpath = os.path.join(out_dir, 'art_styles.dat')
-        with open(fpath, 'w') as out:
-            out.write('%s' %(self.avail_styles[0]))
-            for style in self.avail_styles[1:]:  
-                out.write('\n%s' %(style))    
+        #Write available styles that remain after preprocessing the data.
+        write_available_styles(
+          self.attr, os.path.join(self.out_dir, 'art_styles.dat'))    
 
     def write_output(self):
         #Store preprocessed dataframe.
@@ -92,7 +98,6 @@ class Preproc_Data(object):
     def run_preproc_data(self):
         self.load_data()
         self.clean_data()
-        self.write_available_styles()
         self.write_output()
 
     

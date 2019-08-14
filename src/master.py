@@ -31,7 +31,6 @@ class Master(object):
         
         if self.data_flag:
             Preproc_Data(self.inputs)
-            Process_Data(self.inputs)
             pass
         if self.train_flag:
             Train_Model(self.inputs)

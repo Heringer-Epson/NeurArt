@@ -11,14 +11,11 @@ class Inp_Pars(object):
     Parameters:
     -----------
     """
-    def __init__(self, img_size=400, n_train=2201, n_style_min=None,
+    def __init__(self, img_size=200, n_style_min=100,
                  use_styles=None, gray=False):
         self.img_size = img_size
-        self.n_train = n_train
         
         self.n_style_min = n_style_min
-        #self.n_style_min = 1000
-        
         
         #self.use_styles = use_styles
         #self.use_styles = ['Early Renaissance', 'Cubism', 'Impressionism']
