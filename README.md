@@ -64,14 +64,18 @@ This section will be written soon and will include:
 3. Description of the neural network and its parameters.
 
 ### Directory tree
-.
-| src
-|-- format_images.py
-|-- master.py
-|-- preproc_data.py
-|-- train_model.py
-| output_data
-|-- weights.h5
+
+NeurArt/
+|-- src
+|   |-- master.py
+|   |-- format_images.py
+|   |-- preproc_data.py
+|   `-- train_model.py
+|-- analyses
+|   |-- pixel_hist.py
+|   `-- style_hist.py
+|-- output_data
+|   `-- weights.h5
 
 ### Project phases
 
