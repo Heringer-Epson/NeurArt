@@ -47,8 +47,10 @@ class Preproc_Data(object):
         self.out_dir = os.path.join(self._inp.top_dir, 'output_data')
         
         #Read and store csv file containing attributes of each of the images.
-        attr_filepath = os.path.join(inp_dir, 'train_info.csv')
-        self.attr = pd.read_csv(attr_filepath, header=0)
+        #attr_filepath = os.path.join(inp_dir, 'train_info.csv')
+        #self.attr = pd.read_csv(attr_filepath, header=0)
+        attr_filepath = os.path.join(inp_dir, 'train_info_clean.json')
+        self.attr = pd.read_json(attr_filepath)
 
     def clean_data(self):
 
@@ -59,7 +61,11 @@ class Preproc_Data(object):
         #Rename a few style so that the strings have fewer special chars.
         conversor = {'Analytical\xa0Realism': 'Analytical-Realism',
                      'Sōsaku hanga': 'Sosaku hanga',
-                     'Naïve Art (Primitivism)': 'Naive Art (Primitivism)'}
+                     'Naïve Art (Primitivism)': 'Naive Art (Primitivism)',
+                     'Early Renaissance': 'Renaissance',
+                     'High Renaissance': 'Renaissance',
+                     'Northern Renaissance': 'Renaissance',
+                     'Mannerism (Late Renaissance)': 'Renaissance'}
         self.attr['style'] = self.attr['style'].replace(conversor)
         
         #Display information on raw dataset and write sorted file with styles.
@@ -90,7 +96,6 @@ class Preproc_Data(object):
           self.attr, os.path.join(self.out_dir, 'art_styles.dat'))    
 
     def write_output(self):
-        #Store preprocessed dataframe.
         out_dir = os.path.join(self._inp.top_dir, 'output_data')
         fpath = os.path.join(out_dir, 'preproc_train_info.json')
         self.attr.to_json(fpath)
