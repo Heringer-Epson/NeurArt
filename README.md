@@ -65,17 +65,19 @@ This section will be written soon and will include:
 
 ### Directory tree
 
+```bash
 NeurArt/
 |-- src
 |   |-- master.py
 |   |-- format_images.py
 |   |-- preproc_data.py
-|   `-- train_model.py
+|   |-- train_model.py
 |-- analyses
 |   |-- pixel_hist.py
-|   `-- style_hist.py
+|   |-- style_hist.py
 |-- output_data
-|   `-- weights.h5
+|   |-- weights.h5
+```
 
 ### Project phases
 
