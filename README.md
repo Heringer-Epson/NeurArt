@@ -65,13 +65,13 @@ This section will be written soon and will include:
 
 ### Directory tree
 .
-> src
->> format_images.py
->> master.py
->> preproc_data.py
->> train_model.py
-> output_data
->> weights.h5
+| src
+|-- format_images.py
+|-- master.py
+|-- preproc_data.py
+|-- train_model.py
+| output_data
+|-- weights.h5
 
 ### Project phases
 
