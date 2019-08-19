@@ -23,12 +23,17 @@ pre-trained network will decide on the three most likely art styles and
 return their respective probabilities. 
 
 
-### Installation and Requirements:
-This package was installed in the py37 conda env, enhanced with tensorflow and cv2:
->>conda create -n py37 -c anaconda python=3.7
->>conda install -c conda-forge tensorflow
+### Requirements
+This package was installed in the py37 conda env, enhanced with tensorflow:
+'''python
+conda create -n py37 -c anaconda python=3.7
+conda install -c conda-forge tensorflow
+'''
 
-### Technical details:
+
+### Installation
+
+### Technical details
 
 Blurb about the difficulties in classiying complex images.
 
@@ -37,9 +42,9 @@ Training accuracy.
 
 ### Directories
 .
-+-- src
-|   +--master.py
-|   +--preproc_data.py
+|-- src
+    |-- master.py
+    |-- preproc_data.py
 
 
 
