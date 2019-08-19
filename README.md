@@ -16,7 +16,7 @@ following styles are used. Future implementations should expand on this pool.
 + Dada
 + Pointillism
 
-## Usage and Output:
+### Usage and output:
 To use Neurart, find or take a picture of your favorite art work and feed
 it to the program, as shown in the demo below. After a few seconds, the
 pre-trained network will decide on the three most likely art styles and
@@ -32,13 +32,13 @@ NeurArt will return the most likely art styles. For example
 2.9% Cubism
 ```
 
-
 ### Requirements
 The following packages are necessary for this program, which I currently
 run on Ubuntu 18.04.2 LTS. See installations tips below.
 ```
 pandas
 numpy
+matplotlib
 sklearn
 tensorflow
 ```
@@ -52,21 +52,32 @@ conda install -c conda-forge tensorflow
 Once you have your conda environment set up and activated, git clone this
 package.
 ```
-git clone 
+git clone git@github.com:Heringer-Epson/NeurArt.git
 ```
 
 ### Technical details
 
+This section will be written soon and will include:
 
-the database and pre-processing
-Training accuracy.
+1. Data collection.
+2. Data pre-processing.
+3. Description of the neural network and its parameters.
 
 ### Directory tree
 .
 > src
+>> format_images.py
 >> master.py
 >> preproc_data.py
+>> train_model.py
+> output_data
+>> weights.h5
 
+### Project phases
+
+1. Project desing, proof-of-concept and data-preprocessing (completed).
+2. Prototype package, with optimized parameters and user-friendly (current).
+3. Move project to Azure and expand database and number of styles (upcoming).
 
 
 
