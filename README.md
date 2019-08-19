@@ -16,31 +16,52 @@ following styles are used. Future implementations should expand on this pool.
 + Dada
 + Pointillism
 
-Usage and Output:
+## Usage and Output:
 To use Neurart, find or take a picture of your favorite art work and feed
 it to the program, as shown in the demo below. After a few seconds, the
 pre-trained network will decide on the three most likely art styles and
-return their respective probabilities. 
+return their respective probabilities. Go to the source directory in your
+cloned repository and type
+```python
+python3 master.py 'PATH_TO_IMAGE'
+```
+NeurArt will return the most likely art styles. For example
+```
+92.3% Impressionism
+4.8% Renaissance
+2.9% Cubism
+```
 
 
 ### Requirements
+The following packages are necessary for this program, which I currently
+run on Ubuntu 18.04.2 LTS. See installations tips below.
+```
+pandas
+numpy
+sklearn
+tensorflow
+```
+
+### Installation
 This package was installed in the py37 conda env, enhanced with tensorflow:
 ```
 conda create -n py37 -c anaconda python=3.7
 conda install -c conda-forge tensorflow
 ```
-
-
-### Installation
+Once you have your conda environment set up and activated, git clone this
+package.
+```
+git clone 
+```
 
 ### Technical details
 
-Blurb about the difficulties in classiying complex images.
 
 the database and pre-processing
 Training accuracy.
 
-### Directories
+### Directory tree
 .
 > src
 >> master.py
