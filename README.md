@@ -25,10 +25,10 @@ return their respective probabilities.
 
 ### Requirements
 This package was installed in the py37 conda env, enhanced with tensorflow:
-'''python
+```
 conda create -n py37 -c anaconda python=3.7
 conda install -c conda-forge tensorflow
-'''
+```
 
 
 ### Installation
@@ -42,9 +42,9 @@ Training accuracy.
 
 ### Directories
 .
-|-- src
-    |-- master.py
-    |-- preproc_data.py
+> src
+>> master.py
+>> preproc_data.py
 
 
 
