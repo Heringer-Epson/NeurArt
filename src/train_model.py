@@ -12,9 +12,6 @@ from tensorflow.keras.layers import Dense, Flatten, Conv2D, Dropout
 from tensorflow.keras.layers import Activation, MaxPooling2D, ZeroPadding2D
 from keras_preprocessing.image import ImageDataGenerator
 
-#https://www.youtube.com/watch?v=cAICT4Al5Ow
-#https://medium.com/@vijayabhaskar96/tutorial-on-keras-flow-from-dataframe-1fd4493d237c
-
 class Train_Model(object):
     
     def __init__(self, _inp):
@@ -37,6 +34,7 @@ class Train_Model(object):
         self.n_classes = len(set(self.train_df['style']))
 
     def initialize_generators(self):
+        #Note: target_size argument is (height,width).
         batch_size=50
         datagen=ImageDataGenerator(rescale=1./255.,
                                    validation_split=0.20,
@@ -55,7 +53,7 @@ class Train_Model(object):
           seed=10,
           shuffle=True,
           class_mode='categorical',
-          target_size=(self._inp.img_x,self._inp.img_y))
+          target_size=(self._inp.img_y,self._inp.img_x))
 
         self.valid_generator=datagen.flow_from_dataframe(
           dataframe=self.train_df,
@@ -67,7 +65,7 @@ class Train_Model(object):
           seed=10,
           shuffle=True,
           class_mode='categorical',
-          target_size=(self._inp.img_x,self._inp.img_y))
+          target_size=(self._inp.img_y,self._inp.img_x))
         
         test_datagen=ImageDataGenerator(rescale=1./255.)
         self.test_generator=test_datagen.flow_from_dataframe(
@@ -79,13 +77,13 @@ class Train_Model(object):
           seed=10,
           shuffle=False,
           class_mode=None,
-          target_size=(self._inp.img_x,self._inp.img_y))
+          target_size=(self._inp.img_y,self._inp.img_x))
 
     def build_model(self):
 
         self.model = Sequential()
         self.model.add(Conv2D(32, (3, 3), padding='same', strides=2,
-                         input_shape=(self._inp.img_x,self._inp.img_y,3)))
+                         input_shape=(self._inp.img_y,self._inp.img_x,3)))
         self.model.add(Activation('relu'))
         
         self.model.add(Conv2D(32, (3, 3), strides=2,))
@@ -151,8 +149,10 @@ class Train_Model(object):
 
         #Save weights so that we can use the trained self.model without
         #training it in every run.
-        fpath = os.path.join(self._inp.top_dir, 'output_data/weights.h5')
-        self.model.save_weights(fpath)
+        #fpath = os.path.join(self._inp.top_dir, 'output_data/weights.h5')
+        #self.model.save_weights(fpath)
+        fpath = os.path.join(self._inp.top_dir, 'output_data/model.h5')
+        self.model.save(fpath)
 
     def run_training(self):
         self.read_processed_data()

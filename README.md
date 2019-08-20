@@ -67,15 +67,15 @@ This section will be written soon and will include:
 
 ```bash
 NeurArt/
-|-- src
+|-- src/
 |   |-- master.py
 |   |-- format_images.py
 |   |-- preproc_data.py
 |   |-- train_model.py
-|-- analyses
+|-- analyses/
 |   |-- pixel_hist.py
 |   |-- style_hist.py
-|-- output_data
+|-- output_data/
 |   |-- weights.h5
 ```
 
