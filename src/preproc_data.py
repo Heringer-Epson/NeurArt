@@ -35,16 +35,18 @@ class Preproc_Data(object):
     ./../output_files/X'
     """    
     
-    def __init__(self, _inp):
-        self._inp = _inp
+    def __init__(self, styles, top_dir):
+        self.styles = styles
+        self.top_dir = top_dir
+
         self.all_styles = None
         self.out_dir = None
         
         self.run_preproc_data()
     
     def load_data(self):
-        inp_dir = os.path.join(self._inp.top_dir, 'input_data')
-        self.out_dir = os.path.join(self._inp.top_dir, 'output_data')
+        inp_dir = os.path.join(self.top_dir, 'input_data')
+        self.out_dir = os.path.join(self.top_dir, 'output_data')
         
         #Read and store csv file containing attributes of each of the images.
         #attr_filepath = os.path.join(inp_dir, 'train_info.csv')
@@ -78,25 +80,15 @@ class Preproc_Data(object):
         display_info(self.attr, 'NaN removed')
         
         #Use only art styles in use_styles.
-        if self._inp.use_styles is not  None:
-            self.attr = self.attr[self.attr['style'].isin(self._inp.use_styles)]
-            display_info(self.attr, 'Keep only certain art styles.')              
-
-        #Remove underrepresented art styles.
-        if self._inp.n_style_min is not None:            
-            self.all_styles = self.attr['style'].unique()
-            style_counter = Counter(self.attr['style'].values)
-            relev_styles = [style for style in style_counter.keys()
-                            if style_counter[style] >= self._inp.n_style_min]
-            self.attr = self.attr[self.attr['style'].isin(relev_styles)]
-            display_info(self.attr, 'Remove underrepresented art styles')
+        self.attr = self.attr[self.attr['style'].isin(self.styles)]
+        display_info(self.attr, 'Keep only certain art styles.')              
 
         #Write available styles that remain after preprocessing the data.
         write_available_styles(
           self.attr, os.path.join(self.out_dir, 'art_styles.dat'))    
 
     def write_output(self):
-        out_dir = os.path.join(self._inp.top_dir, 'output_data')
+        out_dir = os.path.join(self.top_dir, 'output_data')
         fpath = os.path.join(out_dir, 'preproc_train_info.json')
         self.attr.to_json(fpath)
 
@@ -104,7 +96,3 @@ class Preproc_Data(object):
         self.load_data()
         self.clean_data()
         self.write_output()
-
-    
-
-    

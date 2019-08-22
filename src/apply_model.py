@@ -2,27 +2,21 @@
 
 import os
 import scipy
-import json
 import pandas as pd
 import numpy as np
-from collections import Counter
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
-from PIL import Image
-import matplotlib.pyplot as plt
-
-from sklearn.preprocessing import LabelEncoder
-from tensorflow.keras.models import Sequential
-#from tensorflow.keras.layers import load_model
 import tensorflow as tf
-from keras_preprocessing.image import ImageDataGenerator
+from PIL import Image
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
 
 class Apply_Model(object):
     
-    def __init__(self, _inp):
-        self._inp = _inp
+    def __init__(self, img_x, img_y, styles, top_dir):
+        self.img_x, self.img_y = img_x, img_y
+        self.styles = styles        
+        self.top_dir = top_dir
+       
         self.form_df = None
         self.model = None
-        self.pred = None
         
         self.run_application()
         
@@ -30,7 +24,7 @@ class Apply_Model(object):
         
         out_fname, out_data = [], []
         
-        inp_dir = os.path.join(self._inp.top_dir, 'input_images')
+        inp_dir = os.path.join(self.top_dir, 'input_images')
         for fname in os.listdir(inp_dir):
 
             img_data = load_img(os.path.join(inp_dir, fname))                                  
@@ -47,13 +41,11 @@ class Apply_Model(object):
                     img = scipy.ndimage.rotate(img_data, 0, reshape=True)
             
                 #Convert image array to an Image object and resize it.
+                #Note that the arg for resize is (width,height).
                 img = Image.fromarray(img)
-                #img = img.resize((900,1200), Image.ANTIALIAS)
-                img = img.resize((200,300), Image.ANTIALIAS)
+                img = img.resize((self.img_x,self.img_y), Image.ANTIALIAS)
                 out_fname.append(fname)
                 out_data.append(np.array(img))
-                plt.imshow(img)
-                plt.show()
 
                 del img #Delete variables to free memory.
             del img_data
@@ -62,17 +54,43 @@ class Apply_Model(object):
                                                'data': out_data})
     
     def build_pretrained_model(self):
-        inp_dir = os.path.join(self._inp.top_dir, 'output_data')
+        inp_dir = os.path.join(self.top_dir, 'output_data')
         fpath = os.path.join(inp_dir, 'model.h5')
         self.model = tf.keras.models.load_model(fpath)
 
     def apply_model_to_input(self):
+
+        labels = sorted(self.styles) #Tensorflow output follows sorted target.
+
         X = [img_array / 255. for img_array in  self.form_df['data'].values]
-        print (np.asarray(X).shape)
-        #print (X, len(X), type(X[0]))
-        #print (np.array(X).shape)
-        self.pred = self.model.predict(np.asarray(X), batch_size=1, steps=1)
-        print (self.pred)
+        pred = self.model.predict(np.asarray(X), batch_size=1, steps=1)
+        #print (pred)
+
+        predicted_class_indices=np.argmax(pred,axis=1)
+        #aux_labels = dict((v,k) for k,v in self.ordered_labels.items())
+        predictions = [labels[k] for k in predicted_class_indices]
+
+        results=pd.DataFrame({'filename': self.form_df['filename'],
+                              'Predicted_style': predictions})
+
+        #Each column in the output predictions corresponds to the probability
+        #of the painting being of a given styles.
+        aux_pred = np.transpose(pred)
+        for i in range(len(self.styles)):
+            results[labels[i]] = aux_pred[i] #list of probs for a style.      
+
+        fpath = os.path.join(self.top_dir, 'output_data/results.csv')
+        results.to_csv(fpath,index=False,header=True)
+
+        if len(results.index) < 10:#If small input, print output as well.
+            fnames = results['filename'].values
+            for i, p in enumerate(pred):
+                sorted_idx = np.argsort(p)[::-1] #In descending order.
+                string = fnames[i] + ': '
+                for k in range(min(len(labels),3)):
+                    idx = sorted_idx[k]
+                    string += ('    ' + labels[idx] + ' (%4.1f%%)' % (p[idx] * 100.))
+                print (string)
 
     def run_application(self):
         self.load_input_data()
