@@ -17,13 +17,11 @@ class Apply_Model(object):
        
         self.form_df = None
         self.model = None
-        
         self.run_application()
         
     def load_input_data(self):
         
         out_fname, out_data = [], []
-        
         inp_dir = os.path.join(self.top_dir, 'input_images')
         for fname in os.listdir(inp_dir):
 
@@ -61,15 +59,10 @@ class Apply_Model(object):
     def apply_model_to_input(self):
 
         labels = sorted(self.styles) #Tensorflow output follows sorted target.
-
         X = [img_array / 255. for img_array in  self.form_df['data'].values]
         pred = self.model.predict(np.asarray(X), batch_size=1, steps=1)
-        #print (pred)
-
         predicted_class_indices=np.argmax(pred,axis=1)
-        #aux_labels = dict((v,k) for k,v in self.ordered_labels.items())
         predictions = [labels[k] for k in predicted_class_indices]
-
         results=pd.DataFrame({'filename': self.form_df['filename'],
                               'Predicted_style': predictions})
 
@@ -86,11 +79,10 @@ class Apply_Model(object):
             fnames = results['filename'].values
             for i, p in enumerate(pred):
                 sorted_idx = np.argsort(p)[::-1] #In descending order.
-                string = fnames[i] + ': '
+                print ('\n' + fnames[i] + ': ')
                 for k in range(min(len(labels),3)):
                     idx = sorted_idx[k]
-                    string += ('    ' + labels[idx] + ' (%4.1f%%)' % (p[idx] * 100.))
-                print (string)
+                    print ('  ' + labels[idx] + ' (%4.1f%%)' % (p[idx] * 100.))
 
     def run_application(self):
         self.load_input_data()
