@@ -56,6 +56,8 @@ git clone git@github.com:Heringer-Epson/NeurArt.git
 ```
 
 ### Input parameters
+The following parameters can be changed in the src/master.py file.
+
 *styles* : ~list (of strings)
 Which styles to use in the training set. Default is ['Impressionism', 'Renaissance', 'Cubism', 'Ukiyo-e', 'Dada', 'Pointillism']. The complete list of options can be found HERE.
 
@@ -81,18 +83,18 @@ These operations reduce the number of artworks from X to Y.
 
 **Description of the neural network and its parameters**
 
-1. A data generator is created using Keras' ImageDataGenerator, where:
-  1. The pixel intensity is rescaled by 1./255, such that intensities are between 0 and 1.
-  2. A fraction of the data is used for validation (10%).
-  3. The data are augmented by allowing the images to be horizontally flipped.
-  4. The batch_size is chosen to 50. Other values produced similar results.
-2. The neural network is created using the keras' Sequential function.
-  1. The first 2D convolution layer has 32 nodes.
-  2. Another 3 convolution layers are added, using 32, 64 and 64 nodes, respectively.
-  3. The model has then a Dropout of 0.25, followed by Flatten, a dense layer with 256 nodes, another Dropout (of 0.5 this time) and a final dense layer with as many nodes as number of styles requested.
-  4. The kernel size used is (3,3) and the default dimensions are height=600 pixels abd width=400 pixels. The activation is 'relu' and, to speed up the training, I adopt strides=2.
-3. The model is compiled by optimizing the crossentropy and using the 'adam' optimizer and using 2 epochs.
-  1. The accuracy obtained is of approximetely 70%, which is quite reasonable for the complex task of classifying art styles. 
++ A data generator is created using Keras' ImageDataGenerator, where:
+  + The pixel intensity is rescaled by 1./255, such that intensities are between 0 and 1.
+  + A fraction of the data is used for validation (10%).
+  + The data are augmented by allowing the images to be horizontally flipped.
+  + The batch_size is chosen to 50. Other values produced similar results.
++ The neural network is created using the keras' Sequential function.
+  + The first 2D convolution layer has 32 nodes.
+  + Another 3 convolution layers are added, using 32, 64 and 64 nodes, respectively.
+  + The model has then a Dropout of 0.25, followed by Flatten, a dense layer with 256 nodes, another Dropout (of 0.5 this time) and a final dense layer with as many nodes as number of styles requested.
+  + The kernel size used is (3,3) and the default dimensions are height=600 pixels abd width=400 pixels. The activation is 'relu' and, to speed up the training, I adopt strides=2.
++ The model is compiled by optimizing the crossentropy and using the 'adam' optimizer and using 2 epochs.
+  + The accuracy obtained is of approximetely 70%, which is quite reasonable for the complex task of classifying art styles. 
 
 ### Directory tree
 
