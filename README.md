@@ -59,9 +59,12 @@ git clone git@github.com:Heringer-Epson/NeurArt.git
 
 This section will be written soon and will include:
 
-1. Data collection.
-2. Data pre-processing.
-3. Description of the neural network and its parameters.
+**Data collection**
+The images used here were gathered from the [Painters by Numbers](https://www.kaggle.com/c/painter-by-numbers) challenge on Kaggle. The original data was collected from [WikiArt.org](https://www.wikiart.org/) and comprises almost 80,000 images divided among 170 styles.
+
+**Data pre-processing**
+
+**Description of the neural network and its parameters**
 
 ### Directory tree
 
