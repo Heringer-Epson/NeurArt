@@ -55,6 +55,16 @@ package.
 git clone git@github.com:Heringer-Epson/NeurArt.git
 ```
 
+### Input parameters
+*styles* : ~list (of strings)
+Which styles to use in the training set. Default is ['Impressionism', 'Renaissance', 'Cubism', 'Ukiyo-e', 'Dada', 'Pointillism']. The complete list of options can be found HERE.
+
+*img_x* : ~int
+Training the neural network requires images to have standard dimensions. This variable will set the number of pixels for the image width. Default is 400.
+
+*img_y* : ~int
+Training the neural network requires images to have standard dimensions. This variable will set the number of pixels for the image height. Default is 600.
+
 ### Technical details
 
 This section will be written soon and will include:
@@ -63,8 +73,26 @@ This section will be written soon and will include:
 The images used here were gathered from the [Painter by Numbers](https://www.kaggle.com/c/painter-by-numbers) challenge on Kaggle. The original data was collected from [WikiArt.org](https://www.wikiart.org/) and comprises almost 80,000 images divided among 170 styles.
 
 **Data pre-processing**
+1. The usage of square canvas is uncommon for artworks. Therefore, I first inspect the distribution of canvas ratios, finding two predominant choices of height/width: 3/4 and 4/3 (see image below). In order to produce a data sample of standard dimensions, I select only the paintings with a ratio close to 4/3 and rotate those of ratio 3/4. Painting that do not conform with this choice are removed. This measure ensures that the neural network is trained and applied to paintings that have not been distorted by the choice of dimensions.
+
+2. Rows that do not have a style assigned are removed.
+
+These operations reduce the number of artworks from X to Y.
 
 **Description of the neural network and its parameters**
+
+1. A data generator is created using Keras' ImageDataGenerator, where:
+  1. The pixel intensity is rescaled by 1./255, such that intensities are between 0 and 1.
+  2. A fraction of the data is used for validation (10%).
+  3. The data are augmented by allowing the images to be horizontally flipped.
+  4. The batch_size is chosen to 50. Other values produced similar results.
+2. The neural network is created using the keras' Sequential function.
+  1. The first 2D convolution layer has 32 nodes.
+  2. Another 3 convolution layers are added, using 32, 64 and 64 nodes, respectively.
+  3. The model has then a Dropout of 0.25, followed by Flatten, a dense layer with 256 nodes, another Dropout (of 0.5 this time) and a final dense layer with as many nodes as number of styles requested.
+  4. The kernel size used is (3,3) and the default dimensions are height=600 pixels abd width=400 pixels. The activation is 'relu' and, to speed up the training, I adopt strides=2.
+3. The model is compiled by optimizing the crossentropy and using the 'adam' optimizer and using 2 epochs.
+  1. The accuracy obtained is of approximetely 70%, which is quite reasonable for the complex task of classifying art styles. 
 
 ### Directory tree
 
