@@ -47,7 +47,11 @@ tensorflow
 This package was installed in the py37 conda env, enhanced with tensorflow:
 ```
 conda create -n py37 -c anaconda python=3.7
+conda install pandas
 conda install -c conda-forge tensorflow
+conda install matplotlib=3.1.1
+conda install -c anaconda pillow=6.1.0
+conda install scikit-learn=0.21.2
 ```
 Once you have your conda environment set up and activated, git clone this
 package.
@@ -72,14 +76,16 @@ Training the neural network requires images to have standard dimensions. This va
 This section will be written soon and will include:
 
 **Data collection**
-The images used here were gathered from the [Painter by Numbers](https://www.kaggle.com/c/painter-by-numbers) challenge on Kaggle. The original data was collected from [WikiArt.org](https://www.wikiart.org/) and comprises almost 80,000 images divided among 170 styles.
+The images used here were gathered from the [Painter by Numbers](https://www.kaggle.com/c/painter-by-numbers) challenge on Kaggle. The files test.zip and train.zip are combined to yield 103,250 artworks divided in 137 styles. Corrupted files are replaced using replacements_for_corrupted_files.zip. The original data was collected from [WikiArt.org](https://www.wikiart.org/).
+
+
 
 **Data pre-processing**
-1. The usage of square canvas is uncommon for artworks. Therefore, I first inspect the distribution of canvas ratios, finding two predominant choices of height/width: 3/4 and 4/3 (see image below). In order to produce a data sample of standard dimensions, I select only the paintings with a ratio close to 4/3 and rotate those of ratio 3/4. Painting that do not conform with this choice are removed. This measure ensures that the neural network is trained and applied to paintings that have not been distorted by the choice of dimensions.
+1. The usage of square canvas is uncommon for artworks. Therefore, I first inspect the distribution of canvas ratios, finding two predominant choices of height/width: 3/4 and 4/3 (see image below). In order to produce a data sample of standard dimensions, I select only the paintings with a ratio close to 4/3 and rotate those of ratio 3/4. Painting that do not conform with this choice are removed. This measure ensures that the neural network is trained and applied to paintings that have not been distorted by the choice of dimensions. The resized images are stored seprately in order to preserve disk space.
 
 2. Rows that do not have a style assigned are removed.
 
-These operations reduce the number of artworks from X to Y.
+These operations reduce the number of artworks to 85949.
 
 **Description of the neural network and its parameters**
 

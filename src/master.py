@@ -17,7 +17,7 @@ class Master(object):
           os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
         
         if train_flag:
-            #Preproc_Data(styles, top_dir)
+            Preproc_Data(styles, top_dir)
             #Train_Model(img_x, img_y, top_dir)
             pass
 
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     #use_styles = ['Ukiyo-e', 'Cubism']
     #use_styles = ['Renaissance', 'Cubism', 'Ukiyo-e']
     use_styles = ['Impressionism', 'Renaissance', 'Cubism', 'Ukiyo-e', 'Dada', 'Pointillism']   
-    Master(train_flag=True, apply_flag=True, img_x=400, img_y=600,
+    Master(train_flag=True, apply_flag=False, img_x=400, img_y=600,
            styles=use_styles)
 
 
