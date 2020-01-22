@@ -14,9 +14,8 @@ from keras_preprocessing.image import ImageDataGenerator
 
 class Train_Model(object):
     
-    def __init__(self, img_x, img_y, top_dir):
+    def __init__(self, img_x, img_y):
         self.img_x, self.img_y = img_x, img_y
-        self.top_dir = top_dir
 
         self.proc_df = None
         self.train_generator, self.valid_generator = None, None
@@ -27,28 +26,28 @@ class Train_Model(object):
         self.run_training()      
 
     def read_processed_data(self):
-        out_dir = os.path.join(self.top_dir, 'output_data')
+        out_dir = './../output_data'
         fpath = os.path.join(out_dir, 'preproc_train_info.json')
         self.proc_df = pd.read_json(fpath)
         self.proc_df = self.proc_df.sample(frac=1)
         self.n_classes = len(set(self.proc_df['style']))
-
+        
     def initialize_generators(self):
         #Note: target_size argument is (height,width).
-        batch_size=50
+        batch_size=20
         datagen=ImageDataGenerator(rescale=1./255.,
-                                   validation_split=0.10,
-                                   horizontal_flip=True)
-        img_dir = os.path.join(self.top_dir, 'input_data/train_clean')
+                                   validation_split=0.20,
+                                   horizontal_flip=False)
+        img_dir = os.path.join('./../input_data/', 'all_train_clean')
                 
         self.train_generator=datagen.flow_from_dataframe(
           dataframe=self.proc_df,
           directory=img_dir,
-          x_col='filename',
+          x_col='new_filename',
           y_col='style',
           subset='training',
           batch_size=batch_size,
-          seed=10,
+          seed=21352,
           shuffle=True,
           class_mode='categorical',
           target_size=(self.img_y,self.img_x))
@@ -56,11 +55,11 @@ class Train_Model(object):
         self.valid_generator=datagen.flow_from_dataframe(
           dataframe=self.proc_df,
           directory=img_dir,
-          x_col='filename',
+          x_col='new_filename',
           y_col='style',
           subset='validation',
           batch_size=batch_size,
-          seed=10,
+          seed=21352,
           shuffle=True,
           class_mode='categorical',
           target_size=(self.img_y,self.img_x))
@@ -106,14 +105,14 @@ class Train_Model(object):
           steps_per_epoch=step_train,
           validation_data=self.valid_generator,
           validation_steps=step_valid,
-          epochs=1)
+          epochs=2)
         
         self.model.evaluate_generator(generator=self.valid_generator,
         steps=step_valid)
 
         #Save weights so that we can use the trained self.model without
         #training it in every run.
-        fpath = os.path.join(self.top_dir, 'output_data/model.h5')
+        fpath = os.path.join('./../output_data/', 'model.h5')
         self.model.save(fpath)
 
     def run_training(self):

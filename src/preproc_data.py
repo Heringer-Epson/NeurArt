@@ -19,25 +19,24 @@ def write_available_styles(df, fpath):
 class Preproc_Data(object):
     """
     The original data contains roughly 80,000 artworks and more than 130 art
-    styles. About half of the styles is poorly represented, with less than 100
-    paintings.
-    This code trims the data to remove these poorly represented styles, with
-    the threshold set by the n_style_min parameter (see  theinput_pars.py file). 
-    Works that do not have an assigned style are also removed.
+    styles. This code remove paintings with incomplete information (such as
+    art with missing labels) and subselect only those whose style is present
+    in styles (set in master.py). The selected entries are stored in a .json
+    reference file. A summary file is also created. 
     
     Parameters:
     -----------
-    _inp : ~instance
-        Instance of the Inp_Pars class defined in input_pars.py.
+    styles : ~list of strings
+        List containing art styles to be incldued.
      
     Outputs:
     --------
-    ./../output_files/X'
+    ./../output_files/preproc_train_info.json'
+    ./../output_files/art_styles.dat'
     """    
     
-    def __init__(self, styles, top_dir):
+    def __init__(self, styles):
         self.styles = styles
-        self.top_dir = top_dir
 
         self.all_styles = None
         self.out_dir = None
@@ -45,22 +44,21 @@ class Preproc_Data(object):
         self.run_preproc_data()
     
     def load_data(self):
-        inp_dir = os.path.join(self.top_dir, 'input_data')
-        self.out_dir = os.path.join(self.top_dir, 'output_data')
+        inp_dir = './../input_data'
+        self.out_dir = './../output_data'
         
         #Read and store csv file containing attributes of each of the images.
-        #attr_filepath = os.path.join(inp_dir, 'train_info.csv')
-        #self.attr = pd.read_csv(attr_filepath, header=0)
         attr_filepath = os.path.join(inp_dir, 'train_info_clean.json')
         self.attr = pd.read_json(attr_filepath)
 
     def clean_data(self):
 
         #Drop all columns except for filename and style.
-        drop_cols = ['artist', 'title', 'genre', 'date']
+        drop_cols = ['artist', 'title', 'genre', 'date', 'pixelsx', 'pixelsy',
+                     'size_bytes', 'source', 'artist_group', 'in_train']
         self.attr.drop(drop_cols, axis=1, inplace=True)
 
-        #Rename a few style so that the strings have fewer special chars.
+        #Rename a few style to remove special chars.
         conversor = {'Analytical\xa0Realism': 'Analytical-Realism',
                      'Sōsaku hanga': 'Sosaku hanga',
                      'Naïve Art (Primitivism)': 'Naive Art (Primitivism)',
@@ -88,8 +86,7 @@ class Preproc_Data(object):
           self.attr, os.path.join(self.out_dir, 'art_styles.dat'))    
 
     def write_output(self):
-        out_dir = os.path.join(self.top_dir, 'output_data')
-        fpath = os.path.join(out_dir, 'preproc_train_info.json')
+        fpath = os.path.join(self.out_dir, 'preproc_train_info.json')
         self.attr.to_json(fpath)
 
     def run_preproc_data(self):
