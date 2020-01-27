@@ -9,7 +9,25 @@ from PIL import Image
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 
 class Apply_Model(object):
+    """
+    Description:
+    ------------
+    [Under Development].
+    This code retrieves the weights of the previously trained Convolutional
+    Neural Network (CNN) and applies it to new input images according to the
+    following steps:
     
+    1) Input images are cropped and transformed to black-and-white images.
+    Images that cannot be cropped while preserving its original ratio are not
+    included.
+    2) Load the pre-trained CNN weights and build the neural network.
+    3) Produce a prediction for each input image. The prediction should include
+    the 3 most likely styles and their respective probabilities.
+    
+    Return:
+    -------
+    None
+    """      
     def __init__(self, img_x, img_y, styles, top_dir):
         self.img_x, self.img_y = img_x, img_y
         self.styles = styles        
